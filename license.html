@@ -1,0 +1,806 @@
+l>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SJTweaks Premium - Activate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --primary: #00aeff;
+            --primary-dim: rgba(0, 174, 255, 0.3);
+            --primary-glow: rgba(0, 174, 255, 0.5);
+            --card-bg: rgba(15, 15, 22, 0.85);
+            --border: rgba(0, 174, 255, 0.12);
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Starfield Canvas */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Smoke Canvas */
+        #smoke-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Title Bar */
+        .titlebar {
+            height: 40px;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 8px;
+            -webkit-app-region: drag;
+            z-index: 100;
+            position: relative;
+        }
+
+        .titlebar-controls {
+            display: flex;
+            -webkit-app-region: no-drag;
+        }
+
+        .titlebar-btn {
+            width: 46px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .titlebar-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        .titlebar-btn.btn-close:hover {
+            background: #e81123;
+            color: white;
+        }
+
+        .titlebar-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            padding: 40px;
+        }
+
+        /* License Card */
+        .license-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 48px 44px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            animation: cardEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Glow line at top of card */
+        .card-glow {
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            border-radius: 2px;
+        }
+
+        /* Logo */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 36px;
+            animation: logoEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+        }
+
+        @keyframes logoEntrance {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-img {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            filter: drop-shadow(0 0 25px var(--primary-dim)) drop-shadow(0 0 50px var(--primary-dim));
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px var(--primary-dim)) drop-shadow(0 0 40px rgba(0, 174, 255, 0.2)); }
+            50% { filter: drop-shadow(0 0 30px var(--primary-glow)) drop-shadow(0 0 60px var(--primary-dim)); }
+        }
+
+        .logo-text {
+            margin-top: 16px;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Input */
+        .input-container {
+            margin-bottom: 20px;
+            animation: inputEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+        }
+
+        @keyframes inputEntrance {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+
+        .license-input {
+            width: 100%;
+            padding: 16px 18px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 1.5px;
+            transition: all 0.3s;
+        }
+
+        .license-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 174, 255, 0.15);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .license-input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.5px;
+        }
+
+        /* Button */
+        .activate-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, #0088cc 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: btnEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+        }
+
+        @keyframes btnEntrance {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .activate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .activate-btn:hover::before {
+            left: 100%;
+        }
+
+        .activate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 174, 255, 0.35);
+        }
+
+        .activate-btn:active {
+            transform: translateY(0);
+        }
+
+        .activate-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .activate-btn.loading .btn-spinner { display: block; }
+        .activate-btn.loading .btn-text { display: none; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status */
+        .status-message {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 16px;
+            animation: statusEntrance 0.3s ease;
+        }
+
+        @keyframes statusEntrance {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-message.show { display: flex; }
+
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #fca5a5;
+        }
+
+        .status-message.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            color: #86efac;
+        }
+
+        .status-message.loading {
+            background: rgba(0, 174, 255, 0.1);
+            border: 1px solid rgba(0, 174, 255, 0.25);
+            color: var(--primary);
+        }
+
+        .status-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* Footer Link */
+        .footer-link {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            animation: footerEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+        }
+
+        @keyframes footerEntrance {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .footer-link p {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .footer-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+            text-shadow: 0 0 10px var(--primary-dim);
+        }
+
+        /* Success Animation */
+        .success-container {
+            display: none;
+            text-align: center;
+        }
+
+        .success-container.show { display: block; }
+
+        .success-check {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 16px;
+        }
+
+        .success-check circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .success-check path {
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: strokeCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.4s forwards;
+        }
+
+        @keyframes strokeCircle {
+            100% { stroke-dashoffset: 0; }
+        }
+
+        @keyframes strokeCheck {
+            100% { stroke-dashoffset: 0; }
+        }
+
+        .success-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 6px;
+        }
+
+        .success-subtext {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+    <!-- Starfield Background -->
+    <canvas id="starfield"></canvas>
+    
+    <!-- Smoke Effect -->
+    <canvas id="smoke-canvas"></canvas>
+
+    <!-- Title Bar -->
+    <div class="titlebar">
+        <div class="titlebar-controls">
+            <button class="titlebar-btn btn-minimize" onclick="minimizeWindow()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14"/>
+                </svg>
+            </button>
+            <button class="titlebar-btn btn-close" onclick="closeWindow()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="license-card">
+            <div class="card-glow"></div>
+            
+            <!-- Logo -->
+            <div class="logo-container">
+                <img src="https://i.imgur.com/MBCguvv.png" alt="SJTweaks" class="logo-img">
+                <div class="logo-text">SJ<span>Tweaks</span></div>
+                <div class="logo-subtitle">Premium Optimization Suite</div>
+            </div>
+
+            <!-- Success State (hidden initially) -->
+            <div class="success-container" id="successContainer">
+                <svg class="success-check" viewBox="0 0 52 52">
+                    <circle cx="26" cy="26" r="24" fill="none" stroke="#22c55e" stroke-width="3"/>
+                    <path fill="none" stroke="#22c55e" stroke-width="3" d="M14 27l8 8 16-16"/>
+                </svg>
+                <div class="success-text">License Activated!</div>
+                <div class="success-subtext">Loading SJTweaks Premium...</div>
+            </div>
+
+            <!-- Input Form -->
+            <div id="formContainer">
+                <div class="input-container">
+                    <label class="input-label">License Key</label>
+                    <input 
+                        type="text" 
+                        class="license-input" 
+                        id="licenseKey" 
+                        placeholder="Enter your license key"
+                        autocomplete="off" 
+                        spellcheck="false"
+                    >
+                </div>
+
+                <button class="activate-btn" id="activateBtn" onclick="validateLicense()">
+                    <span class="btn-content">
+                        <span class="btn-spinner"></span>
+                        <span class="btn-text">Activate License</span>
+                    </span>
+                </button>
+
+                <div class="status-message" id="statusMessage">
+                    <svg class="status-icon" id="statusIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"></svg>
+                    <span id="statusText"></span>
+                </div>
+
+                <div class="footer-link">
+                    <p>Don't have a key? <a href="#" onclick="openWebsite()">sjtweaks.com</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // STARFIELD BACKGROUND
+        // ============================================
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+
+        function initStarfield() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            stars = [];
+            for (let i = 0; i < 150; i++) {
+                const isAccent = Math.random() < 0.5;
+                const isInteractive = Math.random() < 0.3;
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.5 + 0.5,
+                    speedX: (Math.random() - 0.5) * 0.3,
+                    speedY: (Math.random() - 0.5) * 0.3,
+                    opacity: Math.random() * 0.5 + 0.3,
+                    isAccent: isAccent,
+                    isInteractive: isInteractive,
+                    baseX: 0,
+                    baseY: 0
+                });
+                stars[i].baseX = stars[i].x;
+                stars[i].baseY = stars[i].y;
+            }
+        }
+
+        function drawStarfield() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            stars.forEach(star => {
+                // Subtle parallax for interactive stars
+                if (star.isInteractive) {
+                    const dx = (mouseX - canvas.width / 2) * 0.02;
+                    const dy = (mouseY - canvas.height / 2) * 0.02;
+                    star.x = star.baseX + dx;
+                    star.y = star.baseY + dy;
+                }
+                
+                // Move star
+                star.baseX += star.speedX;
+                star.baseY += star.speedY;
+                
+                // Wrap around
+                if (star.baseX < 0) star.baseX = canvas.width;
+                if (star.baseX > canvas.width) star.baseX = 0;
+                if (star.baseY < 0) star.baseY = canvas.height;
+                if (star.baseY > canvas.height) star.baseY = 0;
+                
+                if (!star.isInteractive) {
+                    star.x = star.baseX;
+                    star.y = star.baseY;
+                }
+                
+                // Draw star
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                
+                if (star.isAccent) {
+                    ctx.fillStyle = `rgba(0, 174, 255, ${star.opacity})`;
+                } else {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity * 0.7})`;
+                }
+                ctx.fill();
+                
+                // Glow for accent stars
+                if (star.isAccent && star.size > 1) {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.size * 2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 174, 255, ${star.opacity * 0.15})`;
+                    ctx.fill();
+                }
+            });
+            
+            requestAnimationFrame(drawStarfield);
+        }
+
+        // ============================================
+        // SMOKE EFFECT
+        // ============================================
+        const smokeCanvas = document.getElementById('smoke-canvas');
+        const smokeCtx = smokeCanvas.getContext('2d');
+        let smokeParticles = [];
+
+        function initSmoke() {
+            smokeCanvas.width = window.innerWidth;
+            smokeCanvas.height = window.innerHeight;
+        }
+
+        function createSmokeParticle() {
+            return {
+                x: Math.random() * smokeCanvas.width,
+                y: smokeCanvas.height + 80,
+                size: Math.random() * 80 + 50,
+                speedY: -(Math.random() * 0.8 + 0.3),
+                speedX: (Math.random() - 0.5) * 0.3,
+                opacity: Math.random() * 0.06 + 0.02,
+                life: 0,
+                wobble: Math.random() * Math.PI * 2,
+                wobbleSpeed: Math.random() * 0.015 + 0.005
+            };
+        }
+
+        function updateSmoke() {
+            // Add new particles
+            if (smokeParticles.length < 20 && Math.random() < 0.08) {
+                smokeParticles.push(createSmokeParticle());
+            }
+            
+            smokeParticles.forEach((p, i) => {
+                p.y += p.speedY;
+                p.wobble += p.wobbleSpeed;
+                p.x += Math.sin(p.wobble) * 0.4 + p.speedX;
+                p.size += 0.2;
+                
+                // Calculate fade
+                const positionRatio = 1 - (p.y / smokeCanvas.height);
+                let fadeMultiplier = 1;
+                if (positionRatio < 0.15) fadeMultiplier = positionRatio / 0.15;
+                else if (positionRatio > 0.7) fadeMultiplier = 1 - ((positionRatio - 0.7) / 0.3);
+                p.currentOpacity = p.opacity * fadeMultiplier;
+                
+                // Remove if off screen
+                if (p.y < -p.size) {
+                    smokeParticles.splice(i, 1);
+                }
+            });
+        }
+
+        function drawSmoke() {
+            smokeCtx.clearRect(0, 0, smokeCanvas.width, smokeCanvas.height);
+            
+            smokeParticles.forEach(p => {
+                const gradient = smokeCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                gradient.addColorStop(0, `rgba(0, 174, 255, ${p.currentOpacity * 0.8})`);
+                gradient.addColorStop(0.4, `rgba(0, 174, 255, ${p.currentOpacity * 0.4})`);
+                gradient.addColorStop(1, `rgba(0, 174, 255, 0)`);
+                
+                smokeCtx.fillStyle = gradient;
+                smokeCtx.beginPath();
+                smokeCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                smokeCtx.fill();
+            });
+        }
+
+        function animateSmoke() {
+            updateSmoke();
+            drawSmoke();
+            requestAnimationFrame(animateSmoke);
+        }
+
+        // Mouse tracking
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            initStarfield();
+            initSmoke();
+        });
+
+        // Initialize
+        initStarfield();
+        drawStarfield();
+        initSmoke();
+        animateSmoke();
+
+        // ============================================
+        // LICENSE VALIDATION - Connected to SJTweaks License Server
+        // ============================================
+        const { ipcRenderer, shell } = require('electron');
+        const SERVER_URL = 'https://web-production-cf213f.up.railway.app';
+
+        // Format license key input
+        document.getElementById('licenseKey').addEventListener('input', function(e) {
+            let value = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+            e.target.value = value;
+        });
+
+        async function validateLicense() {
+            const licenseKey = document.getElementById('licenseKey').value.trim().toUpperCase();
+            const btn = document.getElementById('activateBtn');
+            
+            if (!licenseKey) {
+                showStatus('Please enter your license key', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.classList.add('loading');
+            showStatus('Validating license...', 'loading');
+
+            try {
+                const res = await fetch(`${SERVER_URL}/api/licenses/validate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ license_key: licenseKey })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    // Check if license is for premium-utility product
+                    const license = data.license;
+                    if (license && license.product_id && license.product_id !== 'premium-utility') {
+                        showStatus('This license is not valid for Premium Utility', 'error');
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                        return;
+                    }
+                    
+                    showSuccess();
+                    await ipcRenderer.invoke('save-license', licenseKey);
+                    setTimeout(async () => {
+                        await ipcRenderer.invoke('load-main-app');
+                    }, 2000);
+                } else {
+                    showStatus(data.error || 'Invalid license key', 'error');
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                }
+            } catch (e) {
+                showStatus('Connection failed. Check your internet.', 'error');
+                btn.disabled = false;
+                btn.classList.remove('loading');
+            }
+        }
+
+        function showStatus(msg, type) {
+            const container = document.getElementById('statusMessage');
+            const text = document.getElementById('statusText');
+            const icon = document.getElementById('statusIcon');
+            
+            text.textContent = msg;
+            container.className = 'status-message show ' + type;
+            
+            if (type === 'error') {
+                icon.innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+            } else if (type === 'success') {
+                icon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>';
+            } else {
+                icon.innerHTML = '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>';
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('successContainer').classList.add('show');
+        }
+
+        function openWebsite() {
+            shell.openExternal('https://sjtweaks.com');
+        }
+
+        // Window controls
+        function minimizeWindow() {
+            ipcRenderer.send('minimize-window');
+        }
+        function maximizeWindow() {
+            ipcRenderer.send('toggle-maximize');
+        }
+        function closeWindow() {
+            ipcRenderer.send('close-window');
+        }
+
+        // Enter key support
+        document.getElementById('licenseKey').addEventListener('keypress', e => {
+            if (e.key === 'Enter') validateLicense();
+        });
+    </script>
+</body>
+</html
